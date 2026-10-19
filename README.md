@@ -47,7 +47,7 @@ amount accuracy. The gap between the columns is the finding: how wrong a transcr
 still be actionable, and where errors (numbers, dates) cost money.
 
 Two extractors share one schema: `rules` (deterministic, auditable, no API) and `llm`
-(Claude, set `ANTHROPIC_API_KEY`). Comparing them answers a second product question:
+(any OpenAI-compatible chat API: set `LLM_API_KEY`, and optionally `LLM_BASE_URL` and `LLM_MODEL`). Comparing them answers a second product question:
 how much does an LLM understanding layer recover from ASR mistakes?
 
 ## Results
@@ -60,7 +60,7 @@ Filled in after running; see `results/summary.md` and `results/task_summary.md`.
 pip install -r requirements.txt
 python scripts/evaluate.py --audio audio --truth transcripts/ground_truth.csv --out results
 python scripts/score_tasks.py --method rules
-ANTHROPIC_API_KEY=... python scripts/score_tasks.py --method llm   # optional
+LLM_API_KEY=... python scripts/score_tasks.py --method llm   # optional; any OpenAI-compatible provider
 ```
 
 Or open `notebooks/benchmark.ipynb` in Google Colab (free T4 is enough; medium takes ~10 min for 50 clips).

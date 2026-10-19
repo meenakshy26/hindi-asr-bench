@@ -9,4 +9,4 @@ peft>=0.12
 datasets
 accelerate
 tabulate
-anthropic
+openai
