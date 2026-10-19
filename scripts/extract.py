@@ -2,7 +2,7 @@
 
 Two extractors, same output schema:
   rules  — deterministic keyword/number rules (no API, auditable)
-  llm    — Claude via the Anthropic API (set ANTHROPIC_API_KEY)
+  llm    — any OpenAI-compatible chat API (set LLM_API_KEY; optional LLM_BASE_URL, LLM_MODEL)
 
 Output per transcript: {"intent": ptp|extension|dispute|waiver_request|distress|unclear,
                         "ptp_date": e.g. "tomorrow" | "5" | "friday" | null,
@@ -56,20 +56,24 @@ def extract_rules(text):
     return {"intent": intent, "ptp_date": ptp_date, "amount_mentioned": amount}
 
 def extract_llm(text):
-    import anthropic
-    client = anthropic.Anthropic()
+    """Provider-agnostic: works with OpenAI, Groq, OpenRouter, Together or a local server
+    that speaks the OpenAI chat-completions API. Configure with LLM_API_KEY, LLM_BASE_URL, LLM_MODEL."""
+    from openai import OpenAI
+    client = OpenAI(api_key=os.getenv("LLM_API_KEY"), base_url=os.getenv("LLM_BASE_URL") or None)
+    model = os.getenv("LLM_MODEL", "gpt-4o-mini")
     prompt = f"""A borrower said this on an EMI reminder call (Hindi/Hinglish, possibly mis-transcribed):
 "{text}"
 Return ONLY JSON: {{"intent": one of ptp|extension|dispute|waiver_request|distress|unclear,
 "ptp_date": a day word (today, tomorrow, day_after, monday..sunday) or a day-of-month number as a string, or null,
 "amount_mentioned": integer rupees or null}}"""
-    r = client.messages.create(model="claude-sonnet-4-6", max_tokens=200, messages=[{"role":"user","content":prompt}])
-    txt = r.content[0].text.strip().strip("`")
+    r = client.chat.completions.create(model=model, max_tokens=200, temperature=0,
+                                       messages=[{"role": "user", "content": prompt}])
+    txt = (r.choices[0].message.content or "").strip().strip("`")
     txt = txt[txt.find("{"): txt.rfind("}")+1]
     return json.loads(txt)
 
 def extract(text, method="rules"):
-    return extract_llm(text) if method == "llm" and os.getenv("ANTHROPIC_API_KEY") else extract_rules(text)
+    return extract_llm(text) if method == "llm" and os.getenv("LLM_API_KEY") else extract_rules(text)
 
 if __name__ == "__main__":
     import sys
