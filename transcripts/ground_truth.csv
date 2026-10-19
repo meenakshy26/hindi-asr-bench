@@ -1,0 +1,6 @@
+clip_id,filename,condition,categories,transcript,intent,ptp_date,amount_mentioned
+001,001.wav,quiet,"ptp,date",हाँ बोल रहा हूँ कल कर दूँगा,ptp,tomorrow,
+002,002.wav,quiet,"number,date",पाँच तारीख को सैलरी आती है तब कर दूँगा,ptp,5,
+003,003.wav,quiet,dispute,मैंने पहले ही पेमेंट कर दिया है,dispute,,
+004,004.wav,quiet,"hinglish,number",EMI amount ग़लत दिख रहा है ज़्यादा है,dispute,,
+005,005.wav,street,"ptp,hinglish",ok ok शाम तक pay कर दूँगा,ptp,today,
