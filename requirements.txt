@@ -1,0 +1,12 @@
+transformers>=4.44
+torch
+torchaudio
+librosa
+soundfile
+jiwer
+pandas
+peft>=0.12
+datasets
+accelerate
+tabulate
+anthropic
